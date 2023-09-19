@@ -13,11 +13,9 @@ def selenium_driver():
     options.headless = True
     firefox_binary_path = "/usr/bin/firefox-esr"
     options.binary_location = firefox_binary_path
-
     display_port = os.environ.get("DISPLAY_PORT", "99")
     display = f":{display_port}"
     os.environ["DISPLAY"] = display
-
     xvfb_cmd = f"Xvfb {display} -screen 0 1920x1080x24 -nolisten tcp &"
     os.system(xvfb_cmd)
 
@@ -38,6 +36,8 @@ def main():
 
 
     driver.quit()
+
+
 
 if __name__ == "__main__":
     main()
