@@ -1,39 +1,37 @@
-from selenium import webdriver
-from selenium.webdriver import Keys
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-from bs4 import BeautifulSoup as bs
-import pandas as pd
-import time
+import re
+
+def yes_author(text, pattern):
+	authors = re.findall(author_pattern, text)
+	authors_list = []
+	if authors in ",":
+		for author in authors:
+			cleaned_author = author.replace("<", "").replace(">", "").strip()
+			authors_list.append(cleaned_author)
+			result = ", ".join(formatted_authors)
+	else:
+		result = authors
+	return result
 
 
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument("headless")
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
-page_number = 1
-# Bs4 // {page_number} = 장르를 의미
-url = f'https://elib.seoul.go.kr/contents/list?t=EB&m={page_number}'
-driver.get(url)
-time.sleep(1)
-soup = bs(driver.page_source, 'html.parser')
-print(url)
+text = ",<리처드 S. 헤스>,,<더글러스 J. 무> 공편/<박세혁>,<원광연>,<이용중> 공역"
+#text = "<최재천>,<장하준>,<최재붕>,<홍기빈>,<김누리>,<김경일>,<정관용> 저"
 
-try:
-    # "goLast" 버튼을 화면에 스크롤하여 보이도록 하고 클릭
-    element = driver.find_element(By.ID, 'goLast')
-    scroll_element_to_bottom(driver, element)
-    # driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+def yes_author(text):
+	if ' 저' in text:
+		pattern = r"<(.*?)> 저"
+		print("저")
+	elif '편' in text:
+		pattern = r"<(.*?)> 편"
+		print("편")
+	else:
+		return text
+	authors = re.findall(pattern, text)
+	authors_list = []
+	for author in authors:
+		cleaned_author = author.replace("<", "").replace(">", "").strip()
+		authors_list.append(cleaned_author)
+		result = ", ".join(authors_list)
+	return result
 
-    for i in (0, 50):
-        driver.key_down(Keys.PAGE_DOWN).perform()
-        driver.key_up(Keys.PAGE_DOWN).perform()
-
-    time.sleep(1)
-    driver.find_element(By.CLASS_NAME, 'pages').click()
-    time.sleep(1)
-    print("성공")
-except:
-    # 요소를 찾지 못했을 때의 메시지
-    print("요소를 찾지 못했습니다.")
+print(yes_author(text))

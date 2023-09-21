@@ -1,11 +1,7 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from bs4 import BeautifulSoup as bs
-from collections import Counter
-import pandas as pd
-import time
 import os
-import ast
+import scrapSeoul
+import scrapYes
 
 # Selenium 설정
 def selenium_driver():
@@ -18,13 +14,7 @@ def selenium_driver():
     os.environ["DISPLAY"] = display
     xvfb_cmd = f"Xvfb {display} -screen 0 1920x1080x24 -nolisten tcp &"
     os.system(xvfb_cmd)
-
     return webdriver.Firefox(options=options)
-
-# CSV로 저장
-def save_to_csv(data_dict, filename):
-    df = pd.DataFrame(data_dict)
-    df.to_csv(filename, index=True, index_label='row_data')
 
 # | index | 제목 | 지은이 | 출판사 | 출판일 | ISBN | 파일 유형 | 전자도서관 |
 
@@ -32,12 +22,12 @@ def save_to_csv(data_dict, filename):
 def main():
     driver = selenium_driver()
     # df_snu = pd.read_csv('./csv/snu.csv', encoding='utf-8')
-    total_dict = {'제목': [], '지은이': [], '출판사': [], '출판일': [], 'ISBN' : [], '파일 유형' : [], '전자도서관' : [], '링크' : []}
+    seoul_dict = {'제목': [], '지은이': [], '출판사': [], '출판일': [], 'ISBN' : [], '파일유형' : [], '전자도서관' : [], '링크' : []}
+    yes_dict = {'제목': [], '지은이': [], '출판사': [], '출판일': [], 'ISBN' : [], '파일유형' : [], '전자도서관' : [], '링크' : []}
 
-
+    #scrapSeoul.get_seoul_data_all(driver, seoul_dict)
+    scrapYes.get_yes_data_all(driver, yes_dict)
     driver.quit()
-
-
 
 if __name__ == "__main__":
     main()
